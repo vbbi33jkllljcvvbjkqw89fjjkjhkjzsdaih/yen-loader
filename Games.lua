@@ -16,14 +16,14 @@ return {
 		--/ premium:end
 	},
 	{
+		--/ Framework test place only: key, terms and the hub shell. No game features, those belong to their own game by game id
 		Name = "Baseplate (test)",
 		PlaceIds = { 123974602339071 },
 		GameIds = {},
 		Script = "Hub.lua",
-		--/ Every feature, so the tab layout can be checked here. The farms find no enemies on a baseplate and stay idle
-		Features = { "FarmSettings", "Autofarm", "LevelFarm", "BanditFarm", "BossFarm", "Esp", "Loot", "Example" },
+		Features = {},
 		--/ premium:start
-		Premium = { "Premium/PremiumExample" },
+		Premium = {},
 		--/ premium:end
 	},
 }
