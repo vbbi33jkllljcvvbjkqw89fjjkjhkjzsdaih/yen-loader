@@ -32,9 +32,13 @@ else
 	Import.Report("Loader", KeySystem)
 end
 
---/ Already loaded (someone ran the script again). Do not stack a second hub on top of the first
+--/ Already loaded (someone ran the script again). Unload the old hub and reload fresh, so a re-run reopens it and picks up updates instead of doing nothing
 if getgenv().YenHub then
-	return
+	pcall(getgenv().YenHub.Unload)
+
+	getgenv().YenHub = nil
+
+	task.wait(0.2)
 end
 
 if getgenv().YenLoading then
