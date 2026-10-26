@@ -8,8 +8,8 @@ return {
 		PlaceIds = { 16205713724, 17047024836, 75556147183481, 109676363279588, 130395143593224, 136406881576517 },
 		GameIds = { 5595353122 },
 		Script = "Hub.lua",
-		--/ Farms paused after two bans on 2026-10-26: FarmSettings, Autofarm, LevelFarm, BanditFarm, BossFarm, Loot. Add them back here to ship them
-		Features = { "Esp" },
+		--/ Farms re-enabled by the owner on 2026-10-26, knowing the ban risk. FarmSettings must come first so the shared settings exist
+		Features = { "FarmSettings", "Autofarm", "LevelFarm", "BanditFarm", "BossFarm", "Esp", "Loot" },
 		--/ premium:start
 		--/ Premium lists files in src/Features/Premium. They only exist in the premium file, the lines between premium:start and premium:end are cut from the free file by tools\Bundle.ps1
 		Premium = {},
