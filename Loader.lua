@@ -32,6 +32,11 @@ else
 	Import.Report("Loader", KeySystem)
 end
 
+--/ Already loaded (someone ran the script again). Do not stack a second hub on top of the first
+if getgenv().YenHub then
+	return
+end
+
 if getgenv().YenLoading then
 	return
 end

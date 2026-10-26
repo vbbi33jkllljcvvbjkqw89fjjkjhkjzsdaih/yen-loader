@@ -710,6 +710,7 @@ local function Run()
 		local Server = Ui.AddGroup(InfoTab, "Server", "server", "Left")
 
 		Ui.Label(Server, "Game: " .. GameName)
+		Ui.Label(Server, "Yen: " .. (getgenv().YenGame and getgenv().YenGame.Name or "Unsupported"))
 		Ui.Label(Server, "Place ID: " .. game.PlaceId)
 		Ui.Label(Server, "Players: " .. #Players:GetPlayers() .. " / " .. Players.MaxPlayers)
 		Ui.Divider(Server)
