@@ -2,9 +2,15 @@
 
 local Import = ...
 
+--/ Run straight from a loadstring: no Import was passed, so fetch it. Dev uses the workspace copy, everyone else the public yen-loader repo
 if not Import then
+	local LoaderUrl = "https://raw.githubusercontent.com/vbbi33jkllljcvvbjkqw89fjjkjhkjzsdaih/yen-loader/main/Import.lua"
+	local Root = getgenv().YenLocalRoot
+
 	local Ok, Result = pcall(function()
-		return loadstring(readfile(getgenv().YenLocalRoot .. "src/Import.lua"))()
+		local Source = Root and readfile(Root .. "src/Import.lua") or game:HttpGet(LoaderUrl)
+
+		return loadstring(Source, "=Import.lua")()
 	end)
 
 	if not Ok or type(Result) ~= "table" then

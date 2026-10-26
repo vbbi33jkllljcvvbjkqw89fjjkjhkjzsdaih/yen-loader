@@ -1,8 +1,31 @@
---/ File access for Yen. Dev: files from the executor workspace (YenLocalRoot). Bundle: modules and assets embedded in the script
---/ Libraries are public: Farcal from its own repo, Obsidian from the pinned upstream commit
+--/ File access for Yen. Three ways a file is found, in order: the embedded bundle, the dev workspace (YenLocalRoot), then the public repos
+--/ The repos are split by concern: yen-keysystem (key and terms), yen-slayers2 (the game), yen-loader (everything else, the checker and the UI framework)
+--/ Libraries are public too: Farcal from its own repo, Obsidian from the pinned upstream commit
 
-local FarcalUrl = "https://raw.githubusercontent.com/vbbi33jkllljcvvbjkqw89fjjkjhkjzsdaih/farcal-ui/main/"
+local GithubUser = "vbbi33jkllljcvvbjkqw89fjjkjhkjzsdaih"
+local Branch = "main"
+
+local FarcalUrl = "https://raw.githubusercontent.com/" .. GithubUser .. "/farcal-ui/main/"
 local ObsidianUrl = "https://raw.githubusercontent.com/deividcomsono/Obsidian/bdaa9b8f555ed5ff1c4d87bb2d7339babe874e6f/"
+
+local KeyFiles = { ["KeySystem.lua"] = true, ["KeyConfig.lua"] = true, ["Terms.lua"] = true }
+
+--/ Which repo a src file lives in. Files sit at the repo root, so the repo path equals the src path
+local function RepoFor(Path)
+	if KeyFiles[Path] then
+		return "yen-keysystem"
+	end
+
+	if Path == "Farm.lua" or string.sub(Path, 1, 9) == "Features/" then
+		return "yen-slayers2"
+	end
+
+	return "yen-loader"
+end
+
+local function RemoteUrl(Path)
+	return string.format("https://raw.githubusercontent.com/%s/%s/%s/%s", GithubUser, RepoFor(Path), Branch, Path)
+end
 
 local Import = {
 	LocalRoot = getgenv().YenLocalRoot,
@@ -111,14 +134,23 @@ function Import.Remote(Url)
 	return Source
 end
 
+--/ A src file's text, from the dev workspace when there is one, otherwise from its public repo
+local function SourceOf(Path)
+	if Import.LocalRoot then
+		return Attempt(function()
+			return readfile(Import.LocalRoot .. "src/" .. Path)
+		end)
+	end
+
+	return Import.Remote(RemoteUrl(Path))
+end
+
 function Import.Binary(Path)
 	if Import.Binaries and Import.Binaries[Path] then
 		return Import.Binaries[Path]
 	end
 
-	return Attempt(function()
-		return readfile(Import.LocalRoot .. "src/" .. Path)
-	end)
+	return SourceOf(Path)
 end
 
 --/ Compiles once per path, then every call runs a fresh copy of the module
@@ -130,9 +162,7 @@ function Import.Load(Path, ...)
 	local Chunk = Import.Chunks[Path]
 
 	if not Chunk then
-		Chunk = Compile(Attempt(function()
-			return readfile(Import.LocalRoot .. "src/" .. Path)
-		end), Path)
+		Chunk = Compile(SourceOf(Path), Path)
 
 		Import.Chunks[Path] = Chunk
 	end
